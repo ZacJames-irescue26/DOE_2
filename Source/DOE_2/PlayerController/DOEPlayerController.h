@@ -12,7 +12,7 @@ class DOE_2_API ADOEPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
-	//ADOEPlayerController();
+	ADOEPlayerController();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	FHitResult Hit;
 
@@ -25,6 +25,8 @@ private:
 	void SelectUnit();
 	UFUNCTION(Server, Reliable)
 	void MoveUnit(FVector Location);
+	void CreateUnitUI(int UnitId);
+
 
 	UFUNCTION(Server, Reliable)
 	void ServerSelectUnit(AActor* SelectingCharacter);
@@ -41,8 +43,26 @@ private:
 	
 	UPROPERTY(Replicated, VisibleAnywhere)
 	AActor* SelectedUnit;
+	UPROPERTY()
 	class AOverseer* overseerer;
 	class ADOEPlayerState* playerState;
+
+
+	/******UI****************/
+	UPROPERTY()
+	TSubclassOf<UUserWidget> UnitOverlayTemplate;
+	UPROPERTY()
+	class UUnitOverlay* UnitOverlay;
+	
+	UPROPERTY()
+	TSubclassOf<UUserWidget> MoveIconTemplate;
+	UPROPERTY()
+	class UMoveIcon* MoveIcon;
+	UPROPERTY()
+	TSubclassOf<UUserWidget> AttackIconTemplate;
+	UPROPERTY()
+	class UAttackIcon* AttackIcon;
+
 public:
 	FORCEINLINE FVector GetMousePos() const { return MousePos; }
 	AOverseer* GetOverseerer();

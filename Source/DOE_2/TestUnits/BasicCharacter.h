@@ -26,6 +26,7 @@ public:
 	FORCEINLINE void SetTileLocation(FVector2D Location) {TileLocation = Location;}
 	FORCEINLINE int GetTeam() { return Team; }
 	FORCEINLINE int GetPlayerOwner() { return PlayerOwner; }
+	FORCEINLINE int GetUnitId() { return UnitId; }
 
 private:
 	FVector2D TileLocation;
@@ -33,4 +34,6 @@ private:
 	int Team;
 	UPROPERTY(EditAnywhere)
 	int PlayerOwner;
+	UPROPERTY(EditAnywhere)
+	int UnitId;
 };

@@ -8,12 +8,31 @@
 #include "DOE_2/AIControllers/UnitController.h"
 #include "DOE_2/Character/Overseer.h"
 #include "DOE_2/PlayerState/DOEPlayerState.h"
+#include "DOE_2/HUD/UnitOverlay.h"
+#include "DOE_2/HUD/MoveIcon.h"
+#include "DOE_2/HUD/AttackIcon.h"
 #include "GameFramework/PlayerState.h"
 
-//ADOEPlayerController::ADOEPlayerController()
-//{
-//
-//}
+ADOEPlayerController::ADOEPlayerController()
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> UnitOverlayClass(TEXT("/Game/Blueprints/HUD/BP_UnitOverlay"));
+	if(UnitOverlayClass.Class != nullptr)
+	{
+		UnitOverlayTemplate = UnitOverlayClass.Class;
+	}
+
+	ConstructorHelpers::FClassFinder<UUserWidget> MoveIconClass(TEXT("/Game/Blueprints/HUD/BP_MoveIcon"));
+	if (MoveIconClass.Class != nullptr)
+	{
+		MoveIconTemplate = MoveIconClass.Class;
+	}
+
+	ConstructorHelpers::FClassFinder<UUserWidget> AttackIconClass(TEXT("/Game/Blueprints/HUD/BP_AttackIcon"));
+	if (AttackIconClass.Class != nullptr)
+	{
+		AttackIconTemplate = AttackIconClass.Class;
+	}
+}
 
 void ADOEPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -67,6 +86,7 @@ void ADOEPlayerController::RightClick()
 
 }
 
+
 void ADOEPlayerController::MoveUnit_Implementation(FVector location)
 {
 	if (SelectedUnit != nullptr)
@@ -75,7 +95,7 @@ void ADOEPlayerController::MoveUnit_Implementation(FVector location)
 		{
 			ABasicCharacter* character = Cast<ABasicCharacter>(SelectedUnit);
 			if (character == nullptr) return;
-
+			
 			AUnitController* Controller = Cast<AUnitController>(character->GetController());
 			if (Controller)
 			{
@@ -99,14 +119,45 @@ void ADOEPlayerController::MoveUnit_Implementation(FVector location)
 		UE_LOG(LogTemp, Warning, TEXT("selected unit is nullptr"));
 	}
 }
+
+void ADOEPlayerController::CreateUnitUI(int UnitId)
+{
+	if(IsLocalController() && UnitOverlay)
+	{
+		UnitOverlay->RemoveAllChildren();
+		switch (UnitId)
+		{
+		case 0:
+			if (MoveIcon && AttackIcon)
+			{
+				UnitOverlay->AddIcon(MoveIcon);
+				UnitOverlay->AddIcon(AttackIcon);
+			}
+			break;
+		case 1:
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void ADOEPlayerController::SelectUnit()
 {
 	SelectedUnit = Hit.GetActor();
 	if (SelectedUnit != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected unit: %s"), *SelectedUnit->GetName());
-		ServerSelectUnit(SelectedUnit);
 
+		ServerSelectUnit(SelectedUnit);
+		if (SelectedUnit->IsA(ABasicCharacter::StaticClass()))
+		{
+			ABasicCharacter* BasicCharacter = Cast<ABasicCharacter>(SelectedUnit);
+			if (BasicCharacter)
+			{
+				CreateUnitUI(BasicCharacter->GetUnitId());
+			}
+		}
 	}
 
 }
@@ -127,5 +178,23 @@ void ADOEPlayerController::PlayerTick(float DeltaTime)
 
 void ADOEPlayerController::BeginPlay()
 {
+	Super::BeginPlay();
+	if (IsLocalController())
+	{
+		if (UnitOverlayTemplate != nullptr)
+		{
+			UnitOverlay = CreateWidget<UUnitOverlay>(this, UnitOverlayTemplate);
+			UnitOverlay->AddToViewport();
+			UnitOverlay->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (MoveIconTemplate != nullptr)
+		{
+			MoveIcon = CreateWidget<UMoveIcon>(this, MoveIconTemplate);
+		}
+		if (AttackIconTemplate != nullptr)
+		{
+			AttackIcon = CreateWidget<UAttackIcon>(this, AttackIconTemplate);
+		}
+	}
 }
 
