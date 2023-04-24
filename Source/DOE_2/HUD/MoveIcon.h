@@ -13,5 +13,11 @@ UCLASS()
 class DOE_2_API UMoveIcon : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void NativeConstruct() override;
+	UFUNCTION()
+	void Move();
+private:
+	UPROPERTY(meta = (BindWidget))
+	class UButton* MoveIconButton;
 };

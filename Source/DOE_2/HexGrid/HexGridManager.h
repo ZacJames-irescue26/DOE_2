@@ -64,6 +64,7 @@ public:
 	FVector2D Axial_Add(AHexTile* Tile, TPair<int, int> vec);
 	FVector2D Axial_Neighbor(AHexTile* Tile, int direction);
 	void GetNeighbours(AHexTile* Current, TArray<AHexTile*>& OutNeighbours);
+	int Axial_Distance(AHexTile* Start, AHexTile* End);
 	void A_star_Search(AHexTile* Start, AHexTile* Goal, TArray<AHexTile*>& OutArray);
 	double Heuristic(AHexTile* a, AHexTile* b);
 	float Cost(AHexTile* From_Tile, AHexTile* To_Tile);

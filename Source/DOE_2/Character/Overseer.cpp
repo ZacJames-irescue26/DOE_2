@@ -55,7 +55,6 @@ void AOverseer::BeginPlay()
 	SpawnSelectionArea();
 	HexManager = Cast<AHexGridManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AHexGridManager::StaticClass()));
 
-
 }
 
 // Called every frame
@@ -81,6 +80,7 @@ void AOverseer::Tick(float DeltaTime)
 
 		SelectionArea->SetActorLocation(FVector(Hex_To_pixel.X, Hex_To_pixel.Y, MousePos.Z));
 		//FVector2D Round = HexManager->Axial_Round(FVector2D(PlayerController->GetMousePos().X, PlayerController->GetMousePos().Y));
+		
 		if(Tile)
 		{
 			//HexManager->A_star_Search(HexManager->Hash_Table_Lookup(0, 0), HexManager->Hash_Table_Lookup(2, 3), Path);
@@ -101,6 +101,21 @@ void AOverseer::Tick(float DeltaTime)
 					End.Z += 50;
 					DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0, 0, 10.0f);
 				}
+				int Distance = HexManager->Axial_Distance(Tile, HexManager->Hash_Table_Lookup(2, 3));
+				if (!bIsSpawned)
+				{
+					AHexTile* TestTile = HexManager->Hash_Table_Lookup(2, 3);
+					for (int i = (- 2); i <= 2; i++)
+					{
+						for (int j = FMath::Max(-2, -i-2); j <= FMath::Min(2, -i+2); j++)
+						{
+							FVector2D Hex_To_pixel1 = HexManager->Hex_To_Pixel(TestTile->q+i, TestTile->r+j);
+							ASelectionActor* Area = GetWorld()->SpawnActor<ASelectionActor>(SelectionAreaClass, FVector(Hex_To_pixel1.X, Hex_To_pixel1.Y, 10.0f), FRotator::ZeroRotator);
+						}
+					}
+					bIsSpawned = true;
+				}
+				//UE_LOG(LogTemp, Warning, TEXT("Distance From 2,3: %i"), Distance);
 
 			}
 		}
@@ -117,6 +132,11 @@ void AOverseer::SpawnSelectionArea()
 		}
 
 	}
+}
+
+void AOverseer::SpawnArea()
+{
+
 }
 
 

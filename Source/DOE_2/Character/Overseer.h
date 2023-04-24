@@ -22,7 +22,8 @@ protected:
 
 private:
 	void SpawnSelectionArea();
-public:	
+	void SpawnArea();
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -44,4 +45,6 @@ private:
 	class AHexGridManager* HexManager;
 	UPROPERTY(VisibleAnywhere)
 	TArray<class AHexTile*> Path;
+
+	bool bIsSpawned = false;
 };

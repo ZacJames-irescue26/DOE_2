@@ -23,6 +23,9 @@ private:
 	void LeftMouseButtonReleased();
 	void RightClick();
 	void SelectUnit();
+
+	void UnitUI();
+
 	UFUNCTION(Server, Reliable)
 	void MoveUnit(FVector Location);
 	void CreateUnitUI(int UnitId);
@@ -46,6 +49,9 @@ private:
 	UPROPERTY()
 	class AOverseer* overseerer;
 	class ADOEPlayerState* playerState;
+
+	bool bIsSpawnedMoving = false;
+	bool bIsSpawnedAttacking = false;
 
 
 	/******UI****************/

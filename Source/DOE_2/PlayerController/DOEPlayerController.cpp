@@ -150,17 +150,30 @@ void ADOEPlayerController::SelectUnit()
 		UE_LOG(LogTemp, Warning, TEXT("Selected unit: %s"), *SelectedUnit->GetName());
 
 		ServerSelectUnit(SelectedUnit);
-		if (SelectedUnit->IsA(ABasicCharacter::StaticClass()))
+		UnitUI();
+
+	}
+
+}
+
+void ADOEPlayerController::UnitUI()
+{
+	if (SelectedUnit->IsA(ABasicCharacter::StaticClass()))
+	{
+		ABasicCharacter* BasicCharacter = Cast<ABasicCharacter>(SelectedUnit);
+		if (BasicCharacter)
 		{
-			ABasicCharacter* BasicCharacter = Cast<ABasicCharacter>(SelectedUnit);
-			if (BasicCharacter)
+			//playerState = playerState == nullptr ? GetPlayerState<ADOEPlayerState>() : playerState;
+
+			//if (playerState == nullptr) return;
+			//if (BasicCharacter->GetPlayerOwner() == playerState->GetPlayerOwner())
 			{
 				CreateUnitUI(BasicCharacter->GetUnitId());
 			}
 		}
 	}
-
 }
+
 void ADOEPlayerController::ServerSelectUnit_Implementation(AActor* SelectingCharacter)
 {
 		SelectedUnit = SelectingCharacter;
@@ -173,7 +186,13 @@ void ADOEPlayerController::PlayerTick(float DeltaTime)
 	GetHitResultUnderCursor(ECC_Visibility, true, Hit);
 	MousePos = Hit.Location;
 	//UE_LOG(LogTemp, Warning, TEXT("X: %f Y: %f Z: %f"), MousePos.X, MousePos.Y, MousePos.Z);
-	
+	if (playerState->GetMovingGrid())
+	{
+		if (bIsSpawnedMoving == false)
+		{
+			
+		}
+	}
 }
 
 void ADOEPlayerController::BeginPlay()

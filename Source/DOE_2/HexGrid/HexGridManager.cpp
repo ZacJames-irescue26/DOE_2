@@ -8,8 +8,8 @@ AHexGridManager::AHexGridManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	GridWidth = 5;
-	GridHeight = 5;
+	GridWidth = 20;
+	GridHeight = 20;
 	TileHorizontalOffset = FMath::Sqrt(3) * 100;
 	OddRowTileHorizontalOffset = (FMath::Sqrt(3) * 100) / 2;
 	TileVerticleOffset = 200 * 0.75;
@@ -149,6 +149,15 @@ FVector2D AHexGridManager::Axial_Add(AHexTile* Tile, TPair<int, int> vec)
 FVector2D AHexGridManager::Axial_Neighbor(AHexTile* Tile, int direction)
 {
 	return Axial_Add(Tile, Axial_Direction(direction));
+}
+
+int AHexGridManager::Axial_Distance(AHexTile* Start, AHexTile* End)
+{
+	if (Start && End)
+	{
+		return (FMath::Abs(Start->q - End->q) + FMath::Abs(Start->q + Start->r - End->q - End->r) + FMath::Abs(Start->r - End->r))/2;
+	}
+	return 0;
 }
 
 int AHexGridManager::Hash(int q, int r)
